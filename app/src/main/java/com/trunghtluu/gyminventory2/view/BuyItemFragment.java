@@ -43,10 +43,11 @@ public class BuyItemFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
 
-        ItemData item = (ItemData) getArguments().getParcelable("my_key");
+        ItemData item = (ItemData) getArguments().getParcelable("my_parcel");
 
         if (item != null) {
-
+            System.out.println(item.getName());
+            announceTextView.setText("BUYING " + item.getName());
         }
 
     }

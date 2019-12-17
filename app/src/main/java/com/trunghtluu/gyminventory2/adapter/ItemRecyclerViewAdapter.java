@@ -44,6 +44,12 @@ public class ItemRecyclerViewAdapter extends RecyclerView.Adapter<ItemRecyclerVi
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.getNameTextView()
                 .setText(list.get(position).getName());
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                itemAdapterDelegate.itemSelected(list.get(position));
+            }
+        });
     }
 
     @Override

@@ -31,6 +31,8 @@ public class MainActivity extends AppCompatActivity implements ItemRecyclerViewA
     private List<ItemData> shop = new ArrayList<>();
     private List<ItemData> inventory = new ArrayList<>();
 
+    private BuyItemFragment buyItemFragment = new BuyItemFragment();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,8 +54,8 @@ public class MainActivity extends AppCompatActivity implements ItemRecyclerViewA
 
     private void loadShopRecyclerView() {
         shopRecyclerViewAdpater = new ItemRecyclerViewAdapter(shop, this);
-        //DividerItemDecoration itemDecoration = new DividerItemDecoration(this, RecyclerView.VERTICAL);
-        //shopRecyclerView.addItemDecoration(itemDecoration);
+        DividerItemDecoration itemDecoration = new DividerItemDecoration(this, RecyclerView.VERTICAL);
+        shopRecyclerView.addItemDecoration(itemDecoration);
         shopRecyclerView.setLayoutManager(
                 new LinearLayoutManager(this));
         shopRecyclerView.setAdapter(shopRecyclerViewAdpater);
@@ -70,6 +72,12 @@ public class MainActivity extends AppCompatActivity implements ItemRecyclerViewA
 
     @Override
     public void itemSelected(ItemData selected) {
-
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("my_parcel", selected);
+        buyItemFragment.setArguments(bundle);
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.main_framelayout, buyItemFragment)
+                .addToBackStack(buyItemFragment.getTag())
+                .commit();
     }
 }
