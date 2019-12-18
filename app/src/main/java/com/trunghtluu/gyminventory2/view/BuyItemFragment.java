@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -14,6 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.trunghtluu.gyminventory2.R;
+import com.trunghtluu.gyminventory2.database.ItemDBHelper;
 import com.trunghtluu.gyminventory2.model.ItemData;
 
 import butterknife.BindView;
@@ -27,6 +29,10 @@ public class BuyItemFragment extends Fragment {
     @BindView(R.id.quantity_editText)
     EditText quantityEditText;
 
+    @BindView(R.id.submit_Button)
+    Button  submitButton;
+
+    private ItemDBHelper itemDB;
 
     @Nullable
     @Override
@@ -44,10 +50,24 @@ public class BuyItemFragment extends Fragment {
 
 
         ItemData item = (ItemData) getArguments().getParcelable("my_parcel");
+        itemDB = new ItemDBHelper(view.getContext(), null);
 
         if (item != null) {
             System.out.println(item.getName());
-            announceTextView.setText("BUYING " + item.getName());
+            announceTextView.setText("BUYING " + item.getName().toUpperCase());
+
+            submitButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int quantity = Integer.parseInt(quantityEditText.getText().toString());
+
+                    for (int i = 0; i < quantity; ++i)
+                        itemDB.insertItem(item);
+
+                    getActivity().getSupportFragmentManager().popBackStack();
+                    ((MainActivity) getActivity()).onResume();
+                }
+            });
         }
 
     }

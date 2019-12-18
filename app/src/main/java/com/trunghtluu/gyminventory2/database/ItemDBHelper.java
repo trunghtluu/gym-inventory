@@ -28,7 +28,7 @@ public class ItemDBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String createStatement = "CREATE TABLE " + TABLE_NAME +
                 " (" +
-                COLUMN_ITEM_ID + " INTEGER PRIMARY KEY, " +
+                COLUMN_ITEM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COLUMN_ITEM_NAME + " TEXT" + ")";
 
         db.execSQL(createStatement);
@@ -45,20 +45,13 @@ public class ItemDBHelper extends SQLiteOpenHelper {
     public void insertItem(ItemData item) {
 
         ContentValues contentValues = new ContentValues();
-        contentValues.put(COLUMN_ITEM_ID, item.getId());
         contentValues.put(COLUMN_ITEM_NAME, item.getName());
 
         SQLiteDatabase db = getWritableDatabase();
         db.insert(TABLE_NAME, null, contentValues);
     }
 
-    public void deleteReceipt(ItemData item){
-        String deleteStatement = "DELETE FROM "+TABLE_NAME+ " WHERE "+COLUMN_ITEM_ID+" = "+item.getId();
-        SQLiteDatabase db = getWritableDatabase();
-        db.execSQL(deleteStatement);
-    }
-
-    public Cursor retrieveReceipts() {
+    public Cursor retrieveItems() {
 
         String selectStatement = "SELECT * FROM " + TABLE_NAME;
         SQLiteDatabase db = getReadableDatabase();

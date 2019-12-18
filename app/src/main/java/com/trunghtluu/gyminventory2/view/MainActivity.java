@@ -5,14 +5,17 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.database.Cursor;
 import android.os.Bundle;
 
 import com.trunghtluu.gyminventory2.R;
 import com.trunghtluu.gyminventory2.adapter.ItemRecyclerViewAdapter;
+import com.trunghtluu.gyminventory2.database.ItemDBHelper;
 import com.trunghtluu.gyminventory2.model.ItemData;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -33,23 +36,29 @@ public class MainActivity extends AppCompatActivity implements ItemRecyclerViewA
 
     private BuyItemFragment buyItemFragment = new BuyItemFragment();
 
+    private ItemDBHelper itemDB;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        shop.add(new ItemData("1", "Treadmill"));
-        shop.add(new ItemData("2", "Dumbbell"));
-        shop.add(new ItemData("3", "Exercise Bike"));
+        shop.add(new ItemData("Treadmill"));
+        shop.add(new ItemData("Dumbbell"));
+        shop.add(new ItemData("Exercise Bike"));
 
         ButterKnife.bind(this);
+
+        itemDB = new ItemDBHelper(this, null);
 
         loadShopRecyclerView();
     }
 
     @Override
     protected void onResume() {
+
         super.onResume();
+        loadInventoryRecyclerView();
     }
 
     private void loadShopRecyclerView() {
@@ -62,12 +71,23 @@ public class MainActivity extends AppCompatActivity implements ItemRecyclerViewA
     }
 
     private void loadInventoryRecyclerView() {
+        inventory = new ArrayList<>();
+
+        Cursor items = itemDB.retrieveItems();
+        items.moveToFirst();
+
+        while (items.moveToNext()) {
+
+            String itemName = items.getString(items.getColumnIndex(ItemDBHelper.COLUMN_ITEM_NAME));
+            inventory.add(new ItemData(itemName));
+        }
+
         inventoryRecyclerViewAdpater = new ItemRecyclerViewAdapter(inventory, this);
         DividerItemDecoration itemDecoration = new DividerItemDecoration(this, RecyclerView.VERTICAL);
         inventoryRecyclerView.addItemDecoration(itemDecoration);
         inventoryRecyclerView.setLayoutManager(
                 new LinearLayoutManager(this));
-        inventoryRecyclerView.setAdapter(shopRecyclerViewAdpater);
+        inventoryRecyclerView.setAdapter(inventoryRecyclerViewAdpater);
     }
 
     @Override
